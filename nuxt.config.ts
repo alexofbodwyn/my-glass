@@ -8,4 +8,11 @@ export default defineNuxtConfig({
   vite: {
     plugins: [tailwindcss()],
   },
+  modules: ["@nuxtjs/sitemap", "@nuxtjs/robots"],
+  site: {
+    url: "https://myglass.co.uk",
+  },
+  robots: {
+    disallow: [],
+  },
 });
