@@ -35,7 +35,7 @@
         Contact
       </a>
     </div>
-    <div class="flex items-center gap-4 mt-8 text-[#3ea8db]">
+    <!-- <div class="flex items-center gap-4 mt-8 text-[#3ea8db]">
       <a href="#" class="hover:-translate-y-0.5 transition-all duration-300">
         <svg
           width="24"
@@ -135,7 +135,7 @@
           />
         </svg>
       </a>
-    </div>
+    </div> -->
     <p class="mt-8 text-center">
       © 2026 <a href="/">my-glass.co.uk</a>. All rights reserved.
     </p>

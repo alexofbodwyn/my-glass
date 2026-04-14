@@ -1,3 +1,37 @@
+<script setup>
+const form = reactive({ name: '', email: '', phone: '', message: '' })
+const submitted = ref(false)
+const submitting = ref(false)
+const error = ref('')
+
+async function handleSubmit() {
+  submitting.value = true
+  error.value = ''
+  try {
+    const res = await fetch('https://api.web3forms.com/submit', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        access_key: 'a6747093-e74a-4501-a0de-442b0a2fe9db',
+        subject: 'New Contact Form Submission',
+        ...form,
+      }),
+    })
+    const data = await res.json()
+    if (data.success) {
+      submitted.value = true
+      Object.assign(form, { name: '', email: '', phone: '', message: '' })
+    } else {
+      error.value = 'Something went wrong. Please try again.'
+    }
+  } catch {
+    error.value = 'Something went wrong. Please try again.'
+  } finally {
+    submitting.value = false
+  }
+}
+</script>
+
 <template>
   <section class="bg-white py-60">
     <div class="container mx-auto px-4">
@@ -80,30 +114,23 @@
         <h3 class="text-xl font-semibold text-gray-900 mb-6">
           Send us a message
         </h3>
-        <form
-          action="https://api.web3forms.com/submit"
-          method="POST"
-          class="space-y-5"
-        >
-          <input
-            type="hidden"
-            name="access_key"
-            value="a6747093-e74a-4501-a0de-442b0a2fe9db"
-          />
-          <input
-            type="hidden"
-            name="subject"
-            value="New Contact Form Submission"
-          />
+
+        <div v-if="submitted" class="text-center py-10">
+          <div class="text-[#3ea8db] text-5xl mb-4">&#10003;</div>
+          <h4 class="text-xl font-semibold text-gray-900 mb-2">Message Sent!</h4>
+          <p class="text-gray-600">Thank you for getting in touch. We'll respond within 24 hours.</p>
+          <button
+            @click="submitted = false"
+            class="mt-6 text-sm text-[#3ea8db] underline"
+          >Send another message</button>
+        </div>
+
+        <form v-else @submit.prevent="handleSubmit" class="space-y-5">
           <div>
-            <label
-              for="name"
-              class="block text-sm font-medium text-gray-700 mb-2"
-              >Name</label
-            >
+            <label for="name" class="block text-sm font-medium text-gray-700 mb-2">Name</label>
             <input
               id="name"
-              name="name"
+              v-model="form.name"
               type="text"
               required
               class="w-full px-4 py-3 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#3ea8db] focus:border-transparent outline-none transition-all"
@@ -111,14 +138,10 @@
             />
           </div>
           <div>
-            <label
-              for="email"
-              class="block text-sm font-medium text-gray-700 mb-2"
-              >Email</label
-            >
+            <label for="email" class="block text-sm font-medium text-gray-700 mb-2">Email</label>
             <input
               id="email"
-              name="email"
+              v-model="form.email"
               type="email"
               required
               class="w-full px-4 py-3 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#3ea8db] focus:border-transparent outline-none transition-all"
@@ -126,39 +149,33 @@
             />
           </div>
           <div>
-            <label
-              for="phone"
-              class="block text-sm font-medium text-gray-700 mb-2"
-              >Phone</label
-            >
+            <label for="phone" class="block text-sm font-medium text-gray-700 mb-2">Phone</label>
             <input
               id="phone"
-              name="phone"
+              v-model="form.phone"
               type="tel"
               class="w-full px-4 py-3 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#3ea8db] focus:border-transparent outline-none transition-all"
               placeholder="+44 1234 567 890"
             />
           </div>
           <div>
-            <label
-              for="message"
-              class="block text-sm font-medium text-gray-700 mb-2"
-              >Message</label
-            >
+            <label for="message" class="block text-sm font-medium text-gray-700 mb-2">Message</label>
             <textarea
               id="message"
-              name="message"
+              v-model="form.message"
               required
               rows="4"
               class="w-full px-4 py-3 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#3ea8db] focus:border-transparent outline-none transition-all resize-none"
               placeholder="Tell us about your project..."
             ></textarea>
           </div>
+          <p v-if="error" class="text-red-500 text-sm">{{ error }}</p>
           <button
             type="submit"
-            class="w-full bg-[#3ea8db] hover:bg-[#3498c9] text-white font-medium py-3 px-6 rounded-lg transition-colors duration-200"
+            :disabled="submitting"
+            class="w-full bg-[#3ea8db] hover:bg-[#3498c9] disabled:opacity-60 text-white font-medium py-3 px-6 rounded-lg transition-colors duration-200"
           >
-            Send Message
+            {{ submitting ? 'Sending...' : 'Send Message' }}
           </button>
         </form>
       </div>
