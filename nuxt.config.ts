@@ -10,7 +10,7 @@ export default defineNuxtConfig({
   },
   modules: ["@nuxtjs/sitemap", "@nuxtjs/robots"],
   site: {
-    url: "https://myglass.co.uk",
+    url: "https://my-glass.co.uk",
   },
   robots: {
     disallow: [],
